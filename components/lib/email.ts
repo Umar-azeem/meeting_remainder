@@ -90,7 +90,7 @@ export async function sendReminderEmail({
 
 
           <p>
-            Your meeting reminder:
+            Your meeting reminder come on Join Us for birght future :
           </p>
 
 
