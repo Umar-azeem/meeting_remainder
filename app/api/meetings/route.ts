@@ -23,7 +23,6 @@ export async function POST(req: NextRequest) {
       timeZone,
     } = await req.json();
 
-
     // Validation
     if (!summary || !startTime || !endTime || !clientEmail) {
       return NextResponse.json(
@@ -35,11 +34,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-
     // ─────────────────────────────────────────
     // Step 1: Create Google Meet Event
     // ─────────────────────────────────────────
-
     const { meetLink, htmlLink } = await createMeeting({
       summary,
       startTime,
@@ -49,21 +46,16 @@ export async function POST(req: NextRequest) {
       timeZone,
     });
 
-
     console.log("Google Calendar Event Created:", {
       summary,
       meetLink,
       htmlLink,
     });
 
-
-
     // ─────────────────────────────────────────
     // Step 2: Save Meeting in Redis
     // ─────────────────────────────────────────
-
     const meetingId = randomUUID();
-
 
     const meetingData = {
       id: meetingId,
@@ -72,25 +64,24 @@ export async function POST(req: NextRequest) {
       clientEmail,
       startTime,
       meetLink,
-      timeZone: timeZone || "Asia/Karachi",
+      timeZone: timeZone || "America/New_York", // 👈 changed fallback
       remindersSent: {},
     };
 
-
+    console.log("Received from frontend:", {
+      startTime,
+      endTime,
+      timeZone,
+    });
     console.log("Saving Meeting To Redis:", meetingData);
-
 
     await saveMeeting(meetingData);
 
-
     console.log("Meeting Saved Successfully:", meetingId);
-
-
 
     // ─────────────────────────────────────────
     // Step 3: Return Response
     // ─────────────────────────────────────────
-
     return NextResponse.json(
       {
         success: true,
@@ -100,12 +91,8 @@ export async function POST(req: NextRequest) {
       },
       { status: 201 }
     );
-
-
   } catch (err: any) {
-
     console.error("[/api/meetings ERROR]", err);
-
 
     return NextResponse.json(
       {

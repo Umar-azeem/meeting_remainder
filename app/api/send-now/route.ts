@@ -8,10 +8,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sendReminderEmail } from "@/components/lib/email";
 
-
 export async function POST(req: NextRequest) {
   try {
-
     const {
       clientName,
       clientEmail,
@@ -20,7 +18,6 @@ export async function POST(req: NextRequest) {
       startTime,
       timeZone,
     } = await req.json();
-
 
     console.log("SEND NOW REQUEST:", {
       clientName,
@@ -31,18 +28,16 @@ export async function POST(req: NextRequest) {
       timeZone,
     });
 
-
     if (!clientEmail || !summary || !meetLink) {
       return NextResponse.json(
         {
-          error: "Missing required fields"
+          error: "Missing required fields",
         },
         {
-          status: 400
+          status: 400,
         }
       );
     }
-
 
     const result = await sendReminderEmail({
       to: clientEmail,
@@ -50,24 +45,18 @@ export async function POST(req: NextRequest) {
       meetingTitle: summary,
       startTime,
       meetLink,
-      timeZone: timeZone || "Asia/Karachi",
+      timeZone: timeZone || "America/New_York", // 👈 changed fallback
       stageLabel: "manual reminder",
     });
 
-
     console.log("EMAIL RESULT:", result);
-
 
     return NextResponse.json({
       success: true,
       result,
     });
-
-
   } catch (err: any) {
-
     console.error("[/api/send-now ERROR]", err);
-
 
     return NextResponse.json(
       {
@@ -78,6 +67,5 @@ export async function POST(req: NextRequest) {
         status: 500,
       }
     );
-
   }
 }
