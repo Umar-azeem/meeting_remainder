@@ -1,0 +1,6 @@
+.env
+.env.local
+.env.*.local
+components/envsecrat.tsx
+node_modules
+.next
